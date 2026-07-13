@@ -1,9 +1,19 @@
 package org.example;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "bank_user")
 public class AccDetails {
+    @Id
     private int id;
     private String name;
+    @Column(name = "user_name")
     private String uname;
+    @Column(name ="password")
     private String pass;
     private int balance;
 
@@ -13,6 +23,9 @@ public class AccDetails {
 
     public void setId(int id) {
         this.id = id;
+    }
+    public AccDetails(){
+
     }
 
     public AccDetails(int id, String name, String uname, String pass, int balance){

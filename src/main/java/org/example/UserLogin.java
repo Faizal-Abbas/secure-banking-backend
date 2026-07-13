@@ -1,46 +1,40 @@
 package org.example;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+
 import java.sql.*;
 import java.util.*;
 public class UserLogin extends BankManager{
-    AccDetails acc;
-    String sqlToCheckUser="select * from bank_user where user_name=?";
+    AccDetails acc=null;
+    String sqlToCheckUser="from AccDetails a where a.uname=:t1";
     Scanner sc=new Scanner(System.in);
-    public void firstScreen() throws SQLException {
-        Database db=new Database();
-        con=DriverManager.getConnection(url,uname,pass);
-        Scanner sc=new Scanner(System.in);
-        System.out.println("Enter the username: ");
-        String uname=sc.nextLine();
-        System.out.println("Enter the password: ");
-        String pass=sc.nextLine();
-        try(PreparedStatement ps=con.prepareStatement(sqlToCheckUser)){
-            ps.setString(1,uname);
-            try(ResultSet rs=ps.executeQuery()){
-                String m="";
-                if(rs.next()) {
-                    m = rs.getString(4);
-                }else{
-                    System.out.println("Error!...Please check the user name");
-                    System.out.println();
-                    Main.MainPage();
-                }
-                if(m.equals(pass)){
-                    System.out.println("Sucessfully Logged in!");
-                    acc=new AccDetails(rs.getInt(1),
-                            rs.getString(2),
-                            rs.getString(3),
-                            rs.getString(4),
-                            rs.getInt(5));
-                    secondScreen();
-                }else{
-                    System.out.println("Error!...Password Incorrect");
-                    System.out.println();
-                    Main.MainPage();
-                }
+
+    public void firtScreen() throws Exception{
+        try(Session session= sf.openSession()){
+            System.out.println("Enter the username: ");
+            String uname=sc.nextLine();
+            System.out.println("Enter the password: ");
+            String pass=sc.nextLine();
+            Query<AccDetails> query= session.createQuery(sqlToCheckUser,AccDetails.class);
+            query.setParameter("t1",uname);
+            acc=query.getSingleResultOrNull();
+            if(acc==null) {
+                System.out.println("Error!...Please check the user name");
+                System.out.println();
+                Main.MainPage();
+                return;
+            }
+            if(acc.getPass().equals(pass)){
+                System.out.println("logged in successfully");
+                System.out.println();
+                secondScreen();
+            }
+            else {
+                System.out.println("Error!...Please check the user name");
+                System.out.println();
+                Main.MainPage();
             }
         }
-        con.close();
-
     }
 
     private void secondScreen() throws SQLException {
@@ -74,6 +68,7 @@ public class UserLogin extends BankManager{
                     break;
                 case 4:
                     Main.MainPage();
+                    return;
 
             }
         }

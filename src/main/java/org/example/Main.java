@@ -19,7 +19,7 @@ public class Main {
         switch(choice){
             case 1:
                 try {
-                    user.firstScreen();
+                    user.firtScreen();
                 }
                 catch(Exception e){
                     System.out.println(e);
